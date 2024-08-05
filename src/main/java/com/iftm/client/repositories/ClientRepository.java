@@ -13,7 +13,7 @@ import com.iftm.client.entities.Client;
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
     @Query("SELECT c FROM Client c WHERE LOWER(c.name) = LOWER(:name)")
-    Client findByNameIgnoreCase(String name);
+    Optional<Client> findByNameIgnoreCase(String name);
 
     @Query("SELECT c FROM Client c WHERE LOWER(c.name) LIKE %:name%")
     List<Client> findByNameContainingIgnoreCase(String name);
