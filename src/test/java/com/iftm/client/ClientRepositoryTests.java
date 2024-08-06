@@ -68,19 +68,27 @@ public class ClientRepositoryTests {
     @DisplayName("Testar busca de clientes com salário maior que o valor informado.")
     @Test
     public void testarSalarioMaiorQueLimiteInferior() {
+        // O banco possui 10 registros com clientes com salário > 2000
+        int tamanhoEsperado = 10;
+
         double incomeLimiteInferior = 2000.00;
         List<Client> result = clientRepository.findByIncomeGreaterThan(incomeLimiteInferior);
         if (result.isEmpty()) {
             throw new NoSuchElementException("Nenhum cliente encontrado com salário maior que " + incomeLimiteInferior);
         }
-        // Verifica se todos os clientes possuem salário maior que o informado
         assertTrue(result.stream().allMatch(client -> client.getIncome() > incomeLimiteInferior));
+
+        int tamanhoReal = result.size();
+        assertEquals(tamanhoEsperado, tamanhoReal, "O tamanho da lista retornada não corresponde ao esperado.");
     }
 
     // Isabela
     @DisplayName("Testar busca de clientes com salário menor que o valor informado.")
     @Test
     public void testarSalarioMenorQueLimiteSuperior() {
+        // O banco possui 3 registros com clientes com salário < 2000
+        int tamanhoEsperado = 3;
+
         Double incomeLimiteSuperior = 2000.00;
         List<Client> result = clientRepository.findByIncomeLessThan(incomeLimiteSuperior);
         if (result.isEmpty()) {
@@ -88,12 +96,18 @@ public class ClientRepositoryTests {
         }
         // Verifica se todos os clientes possuem salário menor que o informado
         assertTrue(result.stream().allMatch(client -> client.getIncome() < incomeLimiteSuperior));
+
+        int tamanhoReal = result.size();
+        assertEquals(tamanhoEsperado, tamanhoReal, "O tamanho da lista retornada não corresponde ao esperado.");
     }
 
     // Isabela
     @DisplayName("Testar busca de clientes com salário entre os valores informados.")
     @Test
     public void testarSalarioEntreValores() {
+        // O banco possui 6 registros com clientes com salário entre 1000 e 3000
+        int tamanhoEsperado = 6;
+
         double incomeLimiteInferior = 1000.00;
         double incomeLimiteSuperior = 3000.00;
         List<Client> result = clientRepository.findByIncomeBetween(incomeLimiteInferior, incomeLimiteSuperior);
@@ -111,13 +125,18 @@ public class ClientRepositoryTests {
         // especificados
         assertTrue(result.stream().allMatch(
                 client -> client.getIncome() >= incomeLimiteInferior && client.getIncome() <= incomeLimiteSuperior));
+
+        int tamanhoReal = result.size();
+        assertEquals(tamanhoEsperado, tamanhoReal, "O tamanho da lista retornada não corresponde ao esperado.");
     }
 
     // Isabela
     @DisplayName("Testar busca de clientes com salário igual ao valor fornecido para um salário existente")
     @Test
     public void testarSalarioIgualExistente() {
-        // Alguns registros do banco de dados têm o salário de 1500
+        // O banco de dados possui 3 registros de clientes com salário = 1500
+        int tamanhoEsperado = 3; 
+
         double income = 1500.00;
         List<Client> result = clientRepository.findByIncomeEqual(income);
         if (result.isEmpty()) {
@@ -125,6 +144,9 @@ public class ClientRepositoryTests {
         }
         // Verifica se todos os clientes possuem salário igual ao informado
         assertTrue(result.stream().allMatch(client -> client.getIncome().equals(income)));
+
+        int tamanhoReal = result.size();
+        assertEquals(tamanhoEsperado, tamanhoReal, "O tamanho da lista retornada não corresponde ao esperado.");
     }
 
 }
