@@ -45,6 +45,7 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
     @Query("SELECT c FROM Client c WHERE c.income = :income")
     List<Client> findByIncomeEqual(@Param("income") Double income);
 
-    // List<Client> findByBirthDateBetween(Instant dateInit, Instant dateEnd);
-}
-
+    // Ana: implementando método que busca clientes cuja data de nascimento está
+    // entre os valores informados
+    List<Client> findByBirthDateBetween(Instant dataInicio, Instant dataTermino);
+    
