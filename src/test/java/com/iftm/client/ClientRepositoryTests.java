@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,6 +148,62 @@ public class ClientRepositoryTests {
 
         int tamanhoReal = result.size();
         assertEquals(tamanhoEsperado, tamanhoReal, "O tamanho da lista retornada não corresponde ao esperado.");
+    }
+
+    // Ana
+    @DisplayName("Testar a busca de clientes cujas datas de nascimento estão dentro do intervalo especificado")
+    @Test
+    public void testarFindByBirthDateBetweenClientesValidos() {
+        Instant dataInicio = Instant.parse("1970-01-01T00:00:00Z");
+        Instant dataTermino = Instant.parse("2000-01-01T00:00:00Z");
+
+        List<Client> clients = clientRepository.findByBirthDateBetween(dataInicio, dataTermino);
+
+        assertNotNull(clients);
+        assertThat(clients).hasSize(6);  // espera-se que retorne 6 clientes
+        assertThat(clients).extracting("name").containsExactlyInAnyOrder("Gilberto Gil", "Djamila Ribeiro", "Lázaro Ramos", "Carolina Maria de Jesus", "Jose Saramago", "Clarice Lispector"); // nomes dos clientes para confirmar o retorno correto
+    }
+
+    // Ana
+    @DisplayName("Testar a busca de clientes cujas datas de nascimento não estão dentro do intervalo especificado")
+    @Test
+    public void testarFindByBirthDateBetweenClientesInvalidos() {
+        Instant dataInicio = Instant.parse("1900-01-01T00:00:00Z");
+        Instant dataTermino = Instant.parse("1910-01-01T00:00:00Z");
+
+        List<Client> clients = clientRepository.findByBirthDateBetween(dataInicio, dataTermino);
+
+        assertNotNull(clients);
+        assertThat(clients).isEmpty();  // espera-se que não retorne nenhum cliente
+    }
+
+    // Ana
+    @DisplayName("Testar a busca que retorna somente um cliente cuja data de nascimento está dentro do invervalo especificado")
+    @Test
+    public void testarFindByBirthDateBetweenUmCliente() {
+        Instant dataInicio = Instant.parse("1956-01-01T00:00:00Z");
+        Instant dataTermino = Instant.parse("1956-12-31T23:59:59Z");
+
+        List<Client> clients = clientRepository.findByBirthDateBetween(dataInicio, dataTermino);
+
+        assertNotNull(clients);
+        assertThat(clients).hasSize(2);  // espera-se que retorne 2 cliente
+        assertThat(clients).extracting("name").containsExactly("Yuval Noah Harari", "Chimamanda Adichie"); // nomes dos clientes para confirmar o retorno correto
+    }
+
+    // Ana
+    @DisplayName("Testar se a exclusão por id realmente apaga um resgistro existente")
+    @Test
+    public void testarExcluirPorId() {
+        Optional<Client> client = clientRepository.findByNameIgnoreCase("Conceição Evaristo"); // encontra o cliente pelo nome utilizando o método
+        assertThat(client).isPresent(); // verifica se o cliente está presente no banco
+        Client clientExistente = client.get(); // pega o objeto cliente
+        Long clienteId = clientExistente.getId(); // pega o id do cliente pelo objeto
+
+        clientService.delete(clienteId);
+
+        assertThat(clientRepository.existsById(clienteId)).isFalse(); // verifica se o cliente foi deletado
+        assertThat(clientRepository.count()).isEqualTo(12); // verifica se o número de registros diminuiu 1
     }
 
 }
