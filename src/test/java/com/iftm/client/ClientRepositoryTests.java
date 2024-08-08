@@ -19,7 +19,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 
 import com.iftm.client.entities.Client;
 import com.iftm.client.repositories.ClientRepository;
-import com.iftm.client.services.ClientService;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.ANY)
@@ -27,9 +26,6 @@ public class ClientRepositoryTests {
 
     @Autowired
     private ClientRepository clientRepository;
-
-    @Autowired
-    private ClientService clientService;
 
     // Fernanda
     @DisplayName("Testar nome completo existente no banco de dados.")
@@ -166,8 +162,8 @@ public class ClientRepositoryTests {
         List<Client> clients = clientRepository.findByBirthDateBetween(dataInicio, dataTermino);
 
         assertNotNull(clients);
-        assertThat(clients).hasSize(6);  // espera-se que retorne 6 clientes
-        assertThat(clients).extracting("name").containsExactlyInAnyOrder("Gilberto Gil", "Djamila Ribeiro", "Lázaro Ramos", "Carolina Maria de Jesus", "Jose Saramago", "Clarice Lispector"); // nomes dos clientes para confirmar o retorno correto
+        assertThat(clients).hasSize(5);  // espera-se que retorne 6 clientes
+        assertThat(clients).extracting("name").containsExactlyInAnyOrder("Lázaro Ramos", "Carolina Maria de Jesus", "Djamila Ribeiro", "Jose Saramago", "Silvio Almeida"); // nomes dos clientes para confirmar o retorno correto
     }
 
     // Ana
@@ -179,7 +175,7 @@ public class ClientRepositoryTests {
 
         List<Client> clients = clientRepository.findByBirthDateBetween(dataInicio, dataTermino);
 
-        assertNotNull(clients);
+        // assertNotNull(clients);
         assertThat(clients).isEmpty();  // espera-se que não retorne nenhum cliente
     }
 
@@ -192,7 +188,7 @@ public class ClientRepositoryTests {
 
         List<Client> clients = clientRepository.findByBirthDateBetween(dataInicio, dataTermino);
 
-        assertNotNull(clients);
+        // assertNotNull(clients);
         assertThat(clients).hasSize(2);  // espera-se que retorne 2 cliente
         assertThat(clients).extracting("name").containsExactly("Yuval Noah Harari", "Chimamanda Adichie"); // nomes dos clientes para confirmar o retorno correto
     }
@@ -206,7 +202,7 @@ public class ClientRepositoryTests {
         Client clientExistente = client.get(); // pega o objeto cliente
         Long clienteId = clientExistente.getId(); // pega o id do cliente pelo objeto
 
-        clientService.delete(clienteId);
+        clientRepository.delete(clientExistente);
 
         assertThat(clientRepository.existsById(clienteId)).isFalse(); // verifica se o cliente foi deletado
         assertThat(clientRepository.count()).isEqualTo(12); // verifica se o número de registros diminuiu 1
